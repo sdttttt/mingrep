@@ -1,25 +1,6 @@
 use std::env;
-use std::fs;
 use std::process;
-
-struct Config {
-    query: String,
-    file_name: String,
-}
-
-impl Config {
-    fn new(args: Vec<String>) -> Result<Config, String> {
-
-        if args.len() < 3 {
-            return Err(String::from("Fuck you!"));
-        }
-
-        Ok(Self {
-            query: args[1].clone(),
-            file_name: args[2].clone(),
-        })
-    }
-}
+use mingrep::Config;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -29,9 +10,8 @@ fn main() {
         process::exit(1);
     });
 
-    let contents = fs::read_to_string(config.file_name).expect("有问题");
-
-    println!("{},{}", config.query, contents);
+    if let Err(e) = mingrep::run(config) {
+        println!("{}", e);
+        process::exit(1);
+    }
 }
-
-
